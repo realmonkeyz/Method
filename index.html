@@ -26,7 +26,6 @@ font-family:Arial, sans-serif;
 }
 
 
-
 .card{
 
 position:relative;
@@ -213,7 +212,7 @@ filter:brightness(1);
 
 }
 
-@keyframes softGlow{
+
 
 0%{
 opacity:0;
@@ -240,16 +239,20 @@ display:block;
 
 
 
-
 .bottom{
 
 margin-top:auto;
 
 }
 
-
-
-
+.timeBox::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    filter: none;
+    animation: none;
+}
 
 .line {
     height: 2px;
