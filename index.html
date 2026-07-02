@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+
+body{
+
+margin:0;
+height:100vh;
+
+background:#10272b;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+font-family:Arial, sans-serif;
+
+}
+
+
+
+.card{
+
+position:relative;
+
+width:290px;
+height:610px;
+
+
+background:white;
+
+border-radius:25px;
+
+overflow:hidden;
+
+box-shadow:0 11px 40px rgba(0, 0, 0, 0.333);
+
+display:flex;
+flex-direction:column;
+
+padding: 37px 10px 40px;
+
+}
+
+
+
+.inner{
+
+height:110%;
+
+border:0px solid #ddd;
+
+border-radius:5px;
+
+overflow:hidden;
+
+display:flex;
+flex-direction:column;
+
+background:#fff;
+
+box-shadow:
+0 4px 14px rgba(0,0,0,.25);
+
+}
+
+
+
+
+
+.header{
+
+height: 28px;
+
+background:#1c6ab4;
+
+color:white;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-weight:bold;
+
+font-size:13px;
+
+flex-shrink:0;
+
+}
+
+
+
+
+
+.qr{
+
+width:145px;
+
+margin:11px auto 0;
+
+}
+
+
+
+
+
+.mediaBox{
+width:92%;
+margin: 11px auto 0;
+border-radius:6px;
+overflow:hidden;
+}
+
+
+
+
+
+
+
+.timeBox{
+
+height:35px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+background:linear-gradient(
+90deg,
+#6414af,
+#9c3434,
+#1d7549
+);
+
+overflow:hidden;
+
+transition:background 1s ease;
+
+position:relative;
+isolation:isolate;
+
+}
+
+
+
+
+.time{
+
+color:white;
+
+font-size:16px;
+
+font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-weight: 500;
+font-style: bold;
+
+white-space:nowrap;
+
+text-shadow:
+0 1px 1px rgba(0, 0, 0, 0.6),
+0 0 2px rgba(0, 0, 0, 0.5);
+
+
+position:relative;
+z-index:2;
+
+animation:move 1.5s infinite alternate ease-in-out;
+
+}
+
+
+
+
+
+@keyframes move{
+
+from{
+transform:translateX(-50px);
+}
+
+to{
+transform:translateX(50px);
+}
+
+}
+
+
+@keyframes glow{
+
+0%{
+filter:brightness(1);
+}
+
+50%{
+filter:brightness(1.35);
+}
+
+100%{
+filter:brightness(1);
+}
+
+}
+
+@keyframes softGlow{
+
+0%{
+opacity:0;
+}
+
+50%{
+opacity:1;
+}
+
+100%{
+opacity:0;
+}
+
+}
+
+.timeBox::before{
+
+content:"";
+
+position:absolute;
+
+inset:0;
+
+z-index:1;
+
+background:radial-gradient(
+ellipse at center,
+rgba(255,255,255,.57) 0%,
+rgba(255,255,255,.37) 45%,
+rgba(255,255,255,.15) 75%,
+rgba(255,255,255,0) 100%
+);
+
+filter:blur(10px);
+
+opacity:0;
+
+animation:softGlow 2s ease-in-out infinite;
+
+pointer-events:none;
+
+}
+
+
+.picture{
+width:100%;
+height:auto;
+display:block;
+}
+
+
+
+
+
+.bottom{
+
+margin-top:auto;
+
+}
+
+
+
+
+
+.line {
+    height: 2px;
+    margin: 15px 8px 0;
+    background: radial-gradient(circle, #aaa 0.8px, transparent 0.8px);
+    background-size: 4px 4px;
+    background-repeat: repeat-x;
+}
+
+
+
+
+.details{
+
+height:35px;
+
+padding: 10px 11px 7px 20px;
+
+text-align:right;
+
+color:#3c89d1;
+
+font-size:11.5px;
+
+}
+
+.closeBtn{
+
+position:absolute;
+
+top:0px;
+right:15px;
+
+width:55px;
+height:31px;
+
+background:#fff;
+
+border:1px solid #ddd;
+
+border-radius:14px;
+
+color:#383838;
+
+font-size:11px;
+
+font-weight:510;
+
+cursor:pointer;
+
+box-shadow:
+0 3px 10px rgba(0,0,0,.25);
+
+}
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+
+<div class="card">
+
+
+<div class="inner">
+
+
+
+<div class="header">
+
+Single Ride Ticket
+
+</div>
+
+
+<button class="closeBtn">Close</button>
+
+
+<img src="qr.png" class="qr">
+
+
+
+
+
+<div class="mediaBox">
+
+
+
+<div class="timeBox">
+
+
+<div id="clock" class="time"></div>
+
+
+</div>
+
+
+
+
+
+<img src="picture.png" class="picture">
+
+
+
+</div>
+
+
+
+
+
+<div class="bottom">
+
+
+<div class="line"></div>
+
+
+<div class="details">
+
+☷ Details
+
+</div>
+
+
+</div>
+
+
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+<script>
+
+function updateClock(){
+
+let now = new Date();
+
+let hour = now.getHours();
+
+if(hour > 12){
+hour -= 12;
+}
+
+if(hour === 0){
+hour = 12;
+}
+
+let minute =
+String(now.getMinutes())
+.padStart(2,"0");
+
+let second =
+String(now.getSeconds())
+.padStart(2,"0");
+
+let day =
+String(now.getDate())
+.padStart(2,"0");
+
+let month =
+String(now.getMonth()+1)
+.padStart(2,"0");
+
+let year =
+String(now.getFullYear())
+.slice(-2);
+
+document.getElementById("clock").textContent =
+
+String(hour).padStart(2,"0")
++
+":"
++
+minute
++
+":"
++
+second
++
+"  "
++
+day
++
+"/"
++
+month
++
+"/"
++
+year;
+
+}
+
+setInterval(updateClock,1000);
+updateClock();
+
+
+
+
+
+const palettes = [
+
+[
+"#6d28d9",
+"#f97316",
+"#ec4899"
+],
+
+[
+"#2563eb",
+"#f59e0b",
+"#a855f7"
+],
+
+[
+"#dc2626",
+"#8b5cf6",
+"#f59e0b"
+],
+
+[
+"#059669",
+"#e11d48",
+"#7c3aed"
+],
+
+[
+"#f97316",
+"#3b82f6",
+"#db2777"
+],
+
+[
+"#7c3aed",
+"#22c55e",
+"#ef4444"
+],
+
+[
+"#ec4899",
+"#06b6d4",
+"#f59e0b"
+],
+
+[
+"#9333ea",
+"#10b981",
+"#f43f5e"
+]
+
+];
+
+
+
+function set5MinuteColors(){
+
+let now = new Date();
+
+let timeKey =
+
+now.getHours()
++
+"-"
++
+Math.floor(now.getMinutes()/5);
+
+let savedTime =
+localStorage.getItem("colorTime5");
+
+let savedColors =
+localStorage.getItem("colorSet5");
+
+if(savedTime == timeKey && savedColors){
+
+document.querySelector(".timeBox").style.background =
+savedColors;
+
+return;
+
+}
+
+let colors =
+palettes[Math.floor(Math.random()*palettes.length)];
+
+let strip =
+
+`linear-gradient(
+90deg,
+
+${colors[0]} 0%,
+${colors[0]} 33%,
+
+${colors[1]} 33%,
+${colors[1]} 66%,
+
+${colors[2]} 66%,
+${colors[2]} 100%
+
+)`;
+
+document.querySelector(".timeBox").style.background =
+strip;
+
+localStorage.setItem("colorTime5",timeKey);
+localStorage.setItem("colorSet5",strip);
+
+}
+
+set5MinuteColors();
+setInterval(set5MinuteColors,60000);
+
+
+
+
+
+// ======================
+// QR ROTATION
+// ======================
+
+const qr = document.querySelector(".qr");
+
+let angle = 0;
+
+const sequence = [
+    { step: 90, count: 4 },   // 90° x4 (full 360)
+    { step: 180, count: 4 },  // 180° x4
+    { step: 270, count: 3 }   // 270° x3
+];
+
+let sequenceIndex = 0;
+let repeat = 0;
+
+function rotateQR(){
+
+    angle += sequence[sequenceIndex].step;
+
+    qr.style.transform = `rotate(${angle}deg)`;
+
+    repeat++;
+
+    if(repeat >= sequence[sequenceIndex].count){
+
+        repeat = 0;
+        sequenceIndex++;
+
+        if(sequenceIndex >= sequence.length){
+            sequenceIndex = 0;
+        }
+
+    }
+
+}
+
+// First rotation after exactly 2 seconds.
+setInterval(rotateQR,2000);
+
+</script>
